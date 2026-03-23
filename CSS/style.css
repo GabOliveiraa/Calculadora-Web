@@ -1,0 +1,152 @@
+:root {
+    /* cores pra não ficar repetindo código */
+    --blue: #16538C;
+    --dark-blue: #102b44;
+    --aqua-blue: #009682;
+    --purple: #8788FF;
+    --green: #698A41;
+    --yellow: #FFDE56;
+    --white: #FDFBFD;
+    --gray: #D8DADD;
+    --black: #000000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    /* fundo degrade */
+    background: radial-gradient(circle at top, var(--dark-blue), var(--black) 70%);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+}
+
+.voice-calc {
+    /* trava o tamanho do card */
+    width: 100%;
+    max-width: 420px;
+    min-height: 420px;
+
+    background: rgba(216, 218, 221, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(216, 218, 221, 0.1);
+
+    /* organiza melhor os elementos dentro */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.status-text {
+    /* reserva espaço fixo pro texto de cima */
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    letter-spacing: 2px;
+    color: var(--gray);
+}
+
+/* quando estiver ouvindo muda a cor */
+.voice-calc.listening .status-text {
+    color: var(--yellow);
+}
+
+.display-box {
+    /* trava a área do conteúdo */
+    width: 100%;
+    min-height: 170px;
+
+    background: rgba(216, 218, 221, 0.05);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.spoken-text {
+    /* evita bagunça quando o texto mudar */
+    min-height: 24px;
+    color: var(--gray);
+}
+
+.display-text {
+    font-size: 3.5rem;
+    background: linear-gradient(90deg, var(--purple), var(--yellow), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mic-btn {
+    /* botão principal */
+    height: 70px;
+    padding: 15px 35px;
+    border-radius: 50px;
+
+    background: linear-gradient(135deg, var(--aqua-blue), var(--blue));
+    color: white;
+
+    position: relative;
+    margin-top: 40px;
+
+    transition: all 0.25s ease;
+}
+
+.mic-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(135, 136, 255, 0.6);
+}
+
+.mic-btn:active {
+    transform: scale(0.98);
+}
+
+/* muda o botão quando está ouvindo */
+.voice-calc.listening .mic-btn {
+    background: linear-gradient(135deg, var(--purple), #6f70ff);
+}
+
+.mic-icon,
+.btn-text {
+    position: relative;
+    z-index: 2;
+}
+
+/* efeito de pulso */
+.voice-calc.listening .pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    background: rgba(135, 136, 255, 0.25);
+    animation: pulse 1.6s linear infinite;
+}
+
+/* animação expandindo */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    25% {
+        transform: scale(1.2);
+        opacity: 0.45;
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: 0.3;
+    }
+
+    75% {
+        transform: scale(1.6);
+        opacity: 0.15;
+    }
+
+    100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
