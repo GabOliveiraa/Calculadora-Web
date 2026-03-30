@@ -1,13 +1,74 @@
 :root {
-    --blue: #16538C;
-    --dark-blue: #102b44;
-    --aqua-blue: #009682;
-    --purple: #8788FF;
-    --green: #698A41;
-    --yellow: #FFDE56;
-    --white: #FDFBFD;
-    --gray: #D8DADD;
+    /* --- lista de cores --- */
+    --denim-blue: #16538C;
+    --navy-midnight: #102b44;
+    --pine-green: #009682;
+    --periwinkle: #8788FF;
+    --olive-green: #698A41;
+    --soft-gold: #FFDE56;
+    --snow-white: #FDFBFD;
+    --platinum-gray: #D8DADD;
     --black: #000000;
+    --dim-gray: #696969;
+    --deep-teal: #00695c;
+    --off-white: #FDFBFD;
+
+    /* --- tema dark (padrão) --- */
+    --bg-main: radial-gradient(circle at top, var(--navy-midnight), var(--black) 70%);
+    --text-main: var(--snow-white);
+    --text-secondary: var(--platinum-gray);
+    --focus-color: var(--periwinkle);
+
+    --card-bg: rgba(216, 218, 221, 0.08);
+    --card-border: rgba(216, 218, 221, 0.18);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+
+    --box-bg: rgba(216, 218, 221, 0.07);
+    --box-border: rgba(216, 218, 221, 0.12);
+
+    --result-color: var(--soft-gold);
+
+    /* Botão de voz e a animação de pulso */
+    --button-bg: var(--periwinkle);
+    --button-text: var(--navy-midnight);
+    --button-listening-bg: linear-gradient(135deg, var(--periwinkle), #6f70ff);
+
+    --status-listening: var(--soft-gold);
+    --pulse-bg: rgba(135, 136, 255, 0.25);
+
+    /* Botão de trocar tema */
+    --theme-btn-bg: rgba(16, 43, 68, 0.75);
+    --theme-btn-text: var(--snow-white);
+    --theme-btn-border: rgba(255, 255, 255, 0.2);
+}
+
+/* --- modo light --- */
+body.light-mode {
+    --bg-main: radial-gradient(circle at top, #f1f4f8, #d7dee7 70%);
+    --text-main: var(--navy-midnight);
+    --text-secondary: #3f4b5a;
+    --focus-color: var(--pine-green);
+
+    --card-bg: rgba(255, 255, 255, 0.42);
+    --card-border: rgba(16, 43, 68, 0.22);
+
+    --box-bg: rgba(255, 255, 255, 0.28);
+    --box-border: rgba(16, 43, 68, 0.16);
+
+    --result-color: var(--denim-blue);
+
+    --button-bg: var(--deep-teal);
+    --button-text: var(--off-white);
+    --button-listening-bg: var(--deep-teal);
+
+    --status-listening: var(--denim-blue);
+    --pulse-bg: rgba(135, 136, 255, 0.22);
+
+    --theme-btn-bg: rgba(255, 255, 255, 0.45);
+    --theme-btn-text: var(--navy-midnight);
+    --theme-btn-border: rgba(16, 43, 68, 0.22);
+
+    --card-shadow: 0 18px 40px rgba(16, 43, 68, 0.16);
 }
 
 * {
@@ -15,49 +76,67 @@
 }
 
 body {
-    /* fundo degrade */
-    background: radial-gradient(circle at top, var(--dark-blue), var(--black) 70%);
-    color: var(--white);
+    background: var(--bg-main);
+    color: var(--text-main);
     font-family: 'Inter', sans-serif;
+    transition: background 0.3s ease, color 0.3s ease;
+    /* transição suave entre os modos */
 }
 
+body.light-mode .mic-btn {
+    background: var(--button-bg);
+    color: var(--button-text);
+}
+
+body.light-mode .btn-text,
+body.light-mode .mic-icon {
+    color: var(--button-text);
+}
+
+/* --- card da calculadora --- */
 .voice-calc {
-    /* card principal */
     width: 100%;
     max-width: 420px;
     min-height: 420px;
-    background: rgba(216, 218, 221, 0.08);
+    background: var(--card-bg);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(216, 218, 221, 0.18);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
+.voice-calc,
+.display-box,
+.contrast-btn {
+    backdrop-filter: blur(8px);
+}
+
 .status-text {
-    /* texto de status */
+    /* text que avisa se tá ouvindo ou não */
     height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     letter-spacing: 2px;
-    color: var(--white);
+    color: var(--text-main);
     font-size: 0.95rem;
     font-weight: 500;
 }
 
-/* quando estiver ouvindo muda a cor */
 .voice-calc.listening .status-text {
-    color: var(--yellow);
+    color: var(--status-listening);
 }
 
+/* --- display --- */
 .display-box {
-    /* área onde mostra o que foi falado e o resultado */
     width: 100%;
     min-height: 170px;
-    background: rgba(216, 218, 221, 0.07);
-    border: 1px solid rgba(216, 218, 221, 0.12);
+    background: var(--box-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--box-border);
 
     display: flex;
     flex-direction: column;
@@ -65,92 +144,126 @@ body {
 }
 
 .spoken-text {
+    /* o que a pessoa falou */
     min-height: 24px;
-    color: var(--gray);
+    color: var(--text-secondary);
     font-size: 1rem;
     line-height: 1.5;
 }
 
 .display-text {
+    /* resultado */
     font-size: 3.5rem;
     font-weight: 600;
-    color: var(--yellow);
+    color: var(--result-color);
 }
 
+/* --- botão mic e efeitos --- */
 .mic-btn {
-    /* botão principal */
     height: 70px;
     padding: 15px 35px;
     border-radius: 50px;
     border: none;
-
-    background: var(--purple);
-    color: var(--white);
-
+    background: var(--button-bg);
+    color: var(--button-text);
     position: relative;
     margin-top: 40px;
-
     transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
-.mic-btn:hover {
+/* hover do botão no modo dark */
+body:not(.light-mode) .mic-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(135, 136, 255, 0.6);
+    background: rgba(135, 136, 255, 0.08);
+    color: var(--snow-white);
+    box-shadow:
+        0 0 0 3px var(--periwinkle),
+        0 0 20px rgba(135, 136, 255, 0.25),
+        0 0 40px rgba(135, 136, 255, 0.15);
+}
+
+/* hover do botão no modo light */
+body.light-mode .mic-btn:hover {
+    transform: scale(1.05);
+    background: rgba(0, 105, 92, 0.06);
+    color: var(--navy-midnight);
+    box-shadow:
+        0 0 0 3px var(--pine-green),
+        0 0 20px rgba(0, 150, 130, 0.20),
+        0 0 40px rgba(0, 150, 130, 0.12);
+}
+
+/* garante que o texto do botão não suma no hover do light mode */
+body.light-mode .mic-btn:hover,
+body.light-mode .mic-btn:hover .btn-text,
+body.light-mode .mic-btn:hover .mic-icon {
+    color: var(--navy-midnight);
 }
 
 .mic-btn:active {
     transform: scale(0.98);
 }
 
+/* borda de foco pra acessibilidade (teclado) */
 .mic-btn:focus-visible {
-    outline: 3px solid var(--yellow);
+    outline: 3px solid var(--focus-color);
     outline-offset: 4px;
 }
 
-/* muda o botão quando está ouvindo */
 .voice-calc.listening .mic-btn {
-    background: linear-gradient(135deg, var(--purple), #6f70ff);
+    background: var(--button-listening-bg);
 }
 
 .mic-icon,
 .btn-text {
     position: relative;
     z-index: 2;
+    color: inherit;
 }
 
-/* efeito de pulso */
+/* --- animação de pulso --- */
 .voice-calc.listening .pulse-ring {
     position: absolute;
     inset: 0;
     border-radius: 50px;
-    background: rgba(135, 136, 255, 0.25);
+    background: var(--pulse-bg);
     animation: pulse 1.6s linear infinite;
 }
 
-/* animação expandindo */
 @keyframes pulse {
     0% {
         transform: scale(1);
         opacity: 0.6;
     }
 
-    25% {
-        transform: scale(1.2);
-        opacity: 0.45;
-    }
-
-    50% {
-        transform: scale(1.4);
-        opacity: 0.3;
-    }
-
-    75% {
-        transform: scale(1.6);
-        opacity: 0.15;
-    }
-
     100% {
         transform: scale(1.8);
         opacity: 0;
     }
+}
+
+/* --- botão de contraste --- */
+.contrast-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--theme-btn-border);
+    border-radius: 999px;
+    background: var(--theme-btn-bg);
+    color: var(--theme-btn-text);
+    box-shadow: 0 8px 20px rgba(16, 43, 68, 0.08);
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+}
+
+.contrast-btn:hover {
+    background: var(--periwinkle);
+    color: var(--navy-midnight);
+    transform: scale(1.05);
 }
