@@ -8,13 +8,13 @@
     --soft-gold: #FFDE56;
     --snow-white: #FDFBFD;
     --platinum-gray: #D8DADD;
-    --black: #000000;
+    --black:#111111;
     --dim-gray: #696969;
     --deep-teal: #00695c;
     --off-white: #FDFBFD;
 
     /* --- tema dark (padrão) --- */
-    --bg-main: radial-gradient(circle at top, var(--navy-midnight), var(--black) 70%);
+    --bg-main: radial-gradient(circle at top, var(--navy-midnight), var(--black) 90%);
     --text-main: var(--snow-white);
     --text-secondary: var(--platinum-gray);
     --focus-color: var(--periwinkle);
