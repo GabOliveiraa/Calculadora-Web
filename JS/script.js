@@ -9,20 +9,20 @@ function interpretarExpressao(texto) {
         .replace(/resultado de/g, "")
         .trim();
 
+    // Remove o "e" conector (ex: vinte e dois)
+    texto = texto.replace(/\s+e\s+/g, " ");
+
     // números por extenso
     const numeros = {
-        "zero": 0,
-        "um": 1,
-        "dois": 2,
-        "três": 3,
-        "tres": 3,
-        "quatro": 4,
-        "cinco": 5,
-        "seis": 6,
-        "sete": 7,
-        "oito": 8,
-        "nove": 9,
-        "dez": 10
+        // Unidades e 11-19
+        "zero": 0, "um": 1, "dois": 2, "três": 3, "tres": 3, "quatro": 4, "cinco": 5,
+        "seis": 6, "sete": 7, "oito": 8, "nove": 9, "dez": 10, "onze": 11, "doze": 12,
+        "treze": 13, "quatorze": 14, "catorze": 14, "quinze": 15, "dezesseis": 16,
+        "dezessete": 17, "dezoito": 18, "dezenove": 19,
+
+        // Dezenas
+        "vinte": 20, "trinta": 30, "quarenta": 40, "cinquenta": 50,
+        "sessenta": 60, "setenta": 70, "oitenta": 80, "noventa": 90, "cem": 100, "cento": 100
     };
 
     // operadores
@@ -46,8 +46,23 @@ function interpretarExpressao(texto) {
 
 function calcular(expressao) {
     try {
+        // só calcula se tiver operador
+        if (!/[+\-*/]/.test(expressao)) {
+            return "Operação inválida";
+        }
+
         let resultado = eval(expressao);
 
+        // tratamento especial de divisão inválida
+        if (Number.isNaN(resultado)) {
+            return "Indefinido";
+        }
+
+        if (!Number.isFinite(resultado)) {
+            return "Infinito";
+        }
+
+        // limita casas decimais
         if (typeof resultado === "number" && !Number.isInteger(resultado)) {
             resultado = parseFloat(resultado.toFixed(2));
         }
@@ -55,6 +70,44 @@ function calcular(expressao) {
         return resultado;
     } catch {
         return "Erro";
+    }
+}
+
+function formatarExpressaoParaFala(texto) {
+    return texto
+        .replace(/\+/g, " mais ")
+        .replace(/\-/g, " menos ")
+        .replace(/\*/g, " vezes ")
+        .replace(/\//g, " dividido por ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+// resposta falada
+function falarTexto(texto) {
+    window.speechSynthesis.cancel();
+
+    const fala = new SpeechSynthesisUtterance(texto);
+
+    function definirVoz() {
+        const vozes = window.speechSynthesis.getVoices();
+        const vozPtBr = vozes.find((voz) => voz.lang === "pt-BR");
+
+        if (vozPtBr) {
+            fala.voice = vozPtBr;
+        }
+
+        fala.lang = "pt-BR";
+        fala.rate = 1;
+        fala.pitch = 1;
+
+        window.speechSynthesis.speak(fala);
+    }
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = definirVoz;
+    } else {
+        definirVoz();
     }
 }
 
@@ -96,10 +149,39 @@ function startListening() {
         const expressao = interpretarExpressao(textoFalado);
         const resultado = calcular(expressao);
 
-        display.textContent = resultado;
-        display.setAttribute("aria-label", `Resultado: ${resultado}`);
+        if (resultado === "Operação inválida") {
+            display.textContent = "—";
+            display.setAttribute("aria-label", "Operação inválida");
+            falarTexto("Você precisa falar uma operação, por exemplo, dois mais dois.");
+            return;
+        }
 
-        falarTexto(`O resultado de ${textoFalado} é ${resultado}`);
+        if (resultado === "Erro") {
+            display.textContent = "Erro";
+            display.setAttribute("aria-label", "Erro no cálculo");
+            falarTexto("Não foi possível calcular a operação.");
+            return;
+        }
+
+        if (resultado === "Indefinido") {
+            display.textContent = "Indefinido";
+            display.setAttribute("aria-label", "Resultado indefinido");
+            falarTexto("Essa operação é indefinida.");
+            return;
+        }
+
+        if (resultado === "Infinito") {
+            display.textContent = "Infinito";
+            display.setAttribute("aria-label", "Resultado infinito");
+            falarTexto("O resultado é infinito.");
+            return;
+        }
+
+        display.textContent = resultado;
+        display.setAttribute("aria-label", `O resultado é ${resultado}`);
+
+        const textoParaFala = formatarExpressaoParaFala(expressao);
+        falarTexto(`O resultado é ${resultado}`);
     };
 
     // quando a pessoa parar de falar
@@ -113,37 +195,61 @@ function startListening() {
     recognition.onnomatch = () => {
         container.classList.remove("listening");
         status.textContent = "Não entendi";
+        spokenText.textContent = "Você falou: —";
         display.textContent = "Erro";
+        display.setAttribute("aria-label", "Não entendi a operação");
+        falarTexto("Não entendi a operação.");
     };
 
     // erro geral
     recognition.onerror = (event) => {
         container.classList.remove("listening");
+
+        if (event.error === "no-speech") {
+            status.textContent = "Não ouvi nada";
+            spokenText.textContent = "Você falou: —";
+            display.textContent = "—";
+            display.setAttribute("aria-label", "Nenhuma fala detectada");
+            falarTexto("Não ouvi nada. Tente novamente.");
+            return;
+        }
+
+        if (event.error === "audio-capture") {
+            status.textContent = "Microfone não encontrado";
+            spokenText.textContent = "Você falou: —";
+            display.textContent = "Erro";
+            display.setAttribute("aria-label", "Microfone não encontrado");
+            falarTexto("Microfone não encontrado.");
+            return;
+        }
+
+        if (event.error === "not-allowed") {
+            status.textContent = "Permissão negada";
+            spokenText.textContent = "Você falou: —";
+            display.textContent = "Erro";
+            display.setAttribute("aria-label", "Permissão do microfone negada");
+            falarTexto("Permissão do microfone negada.");
+            return;
+        }
+
         status.textContent = "Erro no microfone";
         spokenText.textContent = `Você falou: erro (${event.error})`;
         display.textContent = "Erro";
+        display.setAttribute("aria-label", "Erro no reconhecimento de voz");
 
-        falarTexto("Ocorreu um erro no reconhecimento de voz");
+        falarTexto("Ocorreu um erro no reconhecimento de voz.");
+    };
+
+    // quando finalizar totalmente
+    recognition.onend = () => {
+        container.classList.remove("listening");
+
+        if (status.textContent === "Ouvindo...") {
+            status.textContent = "Pronto para falar";
+        }
     };
 
     recognition.start();
-}
-
-// resposta falada
-function falarTexto(texto) {
-    // cancela qualquer fala anterior
-    window.speechSynthesis.cancel();
-
-    const fala = new SpeechSynthesisUtterance(texto);
-
-    // define idioma
-    fala.lang = "pt-BR";
-
-    // velocidade e tom
-    fala.rate = 1;
-    fala.pitch = 1;
-
-    window.speechSynthesis.speak(fala);
 }
 
 // Alterna entre modo claro e escuro
