@@ -116,6 +116,7 @@ function startListening() {
     const status = document.getElementById("status");
     const spokenText = document.getElementById("spokenText");
     const display = document.getElementById("display");
+    const micBtn = document.getElementById("mic-btn");
 
     const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -139,6 +140,10 @@ function startListening() {
     // estado visual
     container.classList.add("listening");
     status.textContent = "Ouvindo...";
+
+    micBtn.disabled = true;
+    micBtn.setAttribute("aria-pressed", "true");
+    micBtn.setAttribute("aria-label", "Reconhecimento de voz em andamento");
 
     // quando reconhecer algo
     recognition.onresult = (event) => {
@@ -181,7 +186,7 @@ function startListening() {
         display.setAttribute("aria-label", `O resultado é ${resultado}`);
 
         const textoParaFala = formatarExpressaoParaFala(expressao);
-        falarTexto(`O resultado é ${resultado}`);
+        falarTexto(`${textoParaFala} é igual a ${resultado}`);
     };
 
     // quando a pessoa parar de falar
@@ -189,6 +194,9 @@ function startListening() {
         recognition.stop();
         container.classList.remove("listening");
         status.textContent = "Reconhecimento concluído";
+        micBtn.disabled = false;
+        micBtn.setAttribute("aria-pressed", "false");
+        micBtn.setAttribute("aria-label", "Iniciar reconhecimento de voz");
     };
 
     // se não reconhecer direito
@@ -199,50 +207,52 @@ function startListening() {
         display.textContent = "Erro";
         display.setAttribute("aria-label", "Não entendi a operação");
         falarTexto("Não entendi a operação.");
+        micBtn.disabled = false;
+        micBtn.setAttribute("aria-pressed", "false");
+        micBtn.setAttribute("aria-label", "Iniciar reconhecimento de voz");
     };
 
     // erro geral
     recognition.onerror = (event) => {
         container.classList.remove("listening");
+        micBtn.disabled = false;
+        micBtn.setAttribute("aria-pressed", "false");
+        micBtn.setAttribute("aria-label", "Iniciar reconhecimento de voz");
+
+        spokenText.textContent = "Você falou: —";
 
         if (event.error === "no-speech") {
             status.textContent = "Não ouvi nada";
-            spokenText.textContent = "Você falou: —";
             display.textContent = "—";
-            display.setAttribute("aria-label", "Nenhuma fala detectada");
             falarTexto("Não ouvi nada. Tente novamente.");
             return;
         }
 
         if (event.error === "audio-capture") {
             status.textContent = "Microfone não encontrado";
-            spokenText.textContent = "Você falou: —";
             display.textContent = "Erro";
-            display.setAttribute("aria-label", "Microfone não encontrado");
             falarTexto("Microfone não encontrado.");
             return;
         }
 
         if (event.error === "not-allowed") {
             status.textContent = "Permissão negada";
-            spokenText.textContent = "Você falou: —";
             display.textContent = "Erro";
-            display.setAttribute("aria-label", "Permissão do microfone negada");
             falarTexto("Permissão do microfone negada.");
             return;
         }
 
-        status.textContent = "Erro no microfone";
-        spokenText.textContent = `Você falou: erro (${event.error})`;
+        status.textContent = "Reconhecimento interrompido";
         display.textContent = "Erro";
-        display.setAttribute("aria-label", "Erro no reconhecimento de voz");
-
-        falarTexto("Ocorreu um erro no reconhecimento de voz.");
+        falarTexto("O reconhecimento foi interrompido.");
     };
 
     // quando finalizar totalmente
     recognition.onend = () => {
         container.classList.remove("listening");
+        micBtn.disabled = false;
+        micBtn.setAttribute("aria-pressed", "false");
+        micBtn.setAttribute("aria-label", "Iniciar reconhecimento de voz");
 
         if (status.textContent === "Ouvindo...") {
             status.textContent = "Pronto para falar";

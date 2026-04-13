@@ -8,7 +8,7 @@
     --soft-gold: #FFDE56;
     --snow-white: #FDFBFD;
     --platinum-gray: #D8DADD;
-    --black:#111111;
+    --black: #111111;
     --dim-gray: #696969;
     --deep-teal: #00695c;
     --off-white: #FDFBFD;
@@ -153,9 +153,10 @@ body.light-mode .mic-icon {
 
 .display-text {
     /* resultado */
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 8vw, 3.5rem);
     font-weight: 600;
     color: var(--result-color);
+    word-break: break-word;
 }
 
 /* --- botão mic e efeitos --- */
@@ -169,6 +170,13 @@ body.light-mode .mic-icon {
     position: relative;
     margin-top: 40px;
     transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.mic-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* hover do botão no modo dark */
@@ -266,4 +274,13 @@ body.light-mode .mic-btn:hover .mic-icon {
     background: var(--periwinkle);
     color: var(--navy-midnight);
     transform: scale(1.05);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
+    }
 }
