@@ -17,56 +17,62 @@
     --bg-main: radial-gradient(circle at top, var(--navy-midnight), var(--black) 90%);
     --text-main: var(--snow-white);
     --text-secondary: var(--platinum-gray);
-    --focus-color: var(--periwinkle);
+    --focus-color: var(--soft-gold);
 
     --card-bg: rgba(216, 218, 221, 0.08);
-    --card-border: rgba(216, 218, 221, 0.18);
+    --card-border: rgba(216, 218, 221, 0.22);
     --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 
     --box-bg: rgba(216, 218, 221, 0.07);
-    --box-border: rgba(216, 218, 221, 0.12);
+    --box-border: rgba(216, 218, 221, 0.16);
 
     --result-color: var(--soft-gold);
 
     /* Botão de voz e a animação de pulso */
     --button-bg: var(--periwinkle);
     --button-text: var(--navy-midnight);
+    --button-hover-bg: #9b9cff;
     --button-listening-bg: linear-gradient(135deg, var(--periwinkle), #6f70ff);
 
     --status-listening: var(--soft-gold);
     --pulse-bg: rgba(135, 136, 255, 0.25);
 
     /* Botão de trocar tema */
-    --theme-btn-bg: rgba(16, 43, 68, 0.75);
+    --theme-btn-bg: #102b44;
     --theme-btn-text: var(--snow-white);
-    --theme-btn-border: rgba(255, 255, 255, 0.2);
+    --theme-btn-border: rgba(255, 255, 255, 0.35);
+    --theme-btn-hover-bg: var(--soft-gold);
+    --theme-btn-hover-text: var(--navy-midnight);
 }
 
 /* --- modo light --- */
 body.light-mode {
     --bg-main: radial-gradient(circle at top, #f1f4f8, #d7dee7 70%);
     --text-main: var(--navy-midnight);
-    --text-secondary: #3f4b5a;
-    --focus-color: var(--pine-green);
+    --text-secondary: #2f3a47;
+    --focus-color: var(--denim-blue);
 
-    --card-bg: rgba(255, 255, 255, 0.42);
-    --card-border: rgba(16, 43, 68, 0.22);
+    --card-bg: rgba(255, 255, 255, 0.72);
+    --card-border: rgba(16, 43, 68, 0.28);
 
-    --box-bg: rgba(255, 255, 255, 0.28);
-    --box-border: rgba(16, 43, 68, 0.16);
+    --box-bg: rgba(255, 255, 255, 0.62);
+    --box-border: rgba(16, 43, 68, 0.22);
 
     --result-color: var(--denim-blue);
 
     --button-bg: var(--deep-teal);
     --button-text: var(--off-white);
+    --button-hover-bg: #005348;
     --button-listening-bg: var(--deep-teal);
 
     --status-listening: var(--denim-blue);
-    --pulse-bg: rgba(135, 136, 255, 0.22);
+    --pulse-bg: rgba(0, 105, 92, 0.20);
 
-    --theme-btn-bg: rgba(255, 255, 255, 0.45);
+    --theme-btn-bg: var(--snow-white);
     --theme-btn-text: var(--navy-midnight);
-    --theme-btn-border: rgba(16, 43, 68, 0.22);
+    --theme-btn-border: rgba(16, 43, 68, 0.35);
+    --theme-btn-hover-bg: var(--navy-midnight);
+    --theme-btn-hover-text: var(--snow-white);
 
     --card-shadow: 0 18px 40px rgba(16, 43, 68, 0.16);
 }
@@ -75,29 +81,62 @@ body.light-mode {
     box-sizing: border-box;
 }
 
+html {
+    min-height: 100%;
+}
+
 body {
+    min-height: 100vh;
+    margin: 0;
     background: var(--bg-main);
     color: var(--text-main);
-    font-family: 'Inter', sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     transition: background 0.3s ease, color 0.3s ease;
     /* transição suave entre os modos */
 }
 
-body.light-mode .mic-btn {
-    background: var(--button-bg);
-    color: var(--button-text);
+/* link para pular direto para o conteúdo principal */
+/* --- skip link (acessibilidade) --- */
+.skip-link {
+    position: absolute;
+    top: -50px;
+    left: 10px;
+
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+
+    /* padrão dark */
+    background: var(--soft-gold);
+    color: var(--navy-midnight);
+
+    border: 2px solid var(--soft-gold);
+
+    z-index: 1000;
+    transition: all 0.25s ease;
 }
 
-body.light-mode .btn-text,
-body.light-mode .mic-icon {
-    color: var(--button-text);
+/* quando aparece (tab) */
+.skip-link:focus {
+    top: 20px;
+
+    outline: 3px solid var(--focus-color);
+    outline-offset: 3px;
+}
+
+/* --- modo light --- */
+body.light-mode .skip-link {
+    background: var(--denim-blue);
+    color: var(--snow-white);
+    border: 2px solid var(--denim-blue);
 }
 
 /* --- card da calculadora --- */
 .voice-calc {
     width: 100%;
-    max-width: 420px;
-    min-height: 420px;
+    max-width: 460px;
+    min-height: 440px;
     background: var(--card-bg);
     backdrop-filter: blur(8px);
     border: 1px solid var(--card-border);
@@ -114,16 +153,22 @@ body.light-mode .mic-icon {
     backdrop-filter: blur(8px);
 }
 
+.instruction-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
 .status-text {
-    /* text que avisa se tá ouvindo ou não */
-    height: 24px;
+    /* texto que avisa se está ouvindo ou não */
+    min-height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     color: var(--text-main);
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .voice-calc.listening .status-text {
@@ -153,68 +198,58 @@ body.light-mode .mic-icon {
 
 .display-text {
     /* resultado */
+    display: block;
     font-size: clamp(2rem, 8vw, 3.5rem);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--result-color);
+    line-height: 1.15;
     word-break: break-word;
 }
 
 /* --- botão mic e efeitos --- */
 .mic-btn {
-    height: 70px;
+    min-width: 150px;
+    min-height: 70px;
     padding: 15px 35px;
     border-radius: 50px;
     border: none;
     background: var(--button-bg);
     color: var(--button-text);
     position: relative;
-    margin-top: 40px;
+    margin-top: 32px;
+    font-weight: 700;
     transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
+.mic-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    background: var(--button-hover-bg);
+    color: var(--button-text);
+    box-shadow:
+        0 0 0 3px var(--focus-color),
+        0 0 20px rgba(135, 136, 255, 0.25);
+}
+
+body.light-mode .mic-btn:hover:not(:disabled) {
+    color: var(--off-white);
+}
+
+.mic-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
 .mic-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.72;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
 
-/* hover do botão no modo dark */
-body:not(.light-mode) .mic-btn:hover {
-    transform: scale(1.05);
-    background: rgba(135, 136, 255, 0.08);
-    color: var(--snow-white);
-    box-shadow:
-        0 0 0 3px var(--periwinkle),
-        0 0 20px rgba(135, 136, 255, 0.25),
-        0 0 40px rgba(135, 136, 255, 0.15);
-}
-
-/* hover do botão no modo light */
-body.light-mode .mic-btn:hover {
-    transform: scale(1.05);
-    background: rgba(0, 105, 92, 0.06);
-    color: var(--navy-midnight);
-    box-shadow:
-        0 0 0 3px var(--pine-green),
-        0 0 20px rgba(0, 150, 130, 0.20),
-        0 0 40px rgba(0, 150, 130, 0.12);
-}
-
-/* garante que o texto do botão não suma no hover do light mode */
-body.light-mode .mic-btn:hover,
-body.light-mode .mic-btn:hover .btn-text,
-body.light-mode .mic-btn:hover .mic-icon {
-    color: var(--navy-midnight);
-}
-
-.mic-btn:active {
-    transform: scale(0.98);
-}
-
 /* borda de foco pra acessibilidade (teclado) */
-.mic-btn:focus-visible {
-    outline: 3px solid var(--focus-color);
+.mic-btn:focus-visible,
+.contrast-btn:focus-visible,
+.skip-link:focus-visible {
+    outline: 4px solid var(--focus-color);
     outline-offset: 4px;
 }
 
@@ -256,6 +291,8 @@ body.light-mode .mic-btn:hover .mic-icon {
     top: 20px;
     right: 20px;
     z-index: 999;
+    min-height: 44px;
+    min-width: 44px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -267,18 +304,43 @@ body.light-mode .mic-btn:hover .mic-icon {
     box-shadow: 0 8px 20px rgba(16, 43, 68, 0.08);
     cursor: pointer;
     font-size: 0.95rem;
-    transition: all 0.25s ease;
+    font-weight: 700;
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
 
 .contrast-btn:hover {
-    background: var(--periwinkle);
-    color: var(--navy-midnight);
+    background: var(--theme-btn-hover-bg);
+    color: var(--theme-btn-hover-text);
     transform: scale(1.05);
 }
 
+/* ajustes para telas pequenas */
+@media (max-width: 480px) {
+    .container {
+        padding: 16px;
+    }
 
+    .contrast-btn {
+        top: 12px;
+        right: 12px;
+    }
+
+    .voice-calc {
+        min-height: 420px;
+        padding-top: 48px;
+    }
+
+    .instruction-text {
+        font-size: 0.95rem;
+    }
+}
+
+/* reduz animações para quem ativou essa preferência no sistema */
 @media (prefers-reduced-motion: reduce) {
-    * {
+
+    *,
+    *::before,
+    *::after {
         transition: none !important;
         animation: none !important;
         scroll-behavior: auto !important;

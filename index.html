@@ -14,40 +14,54 @@
 </head>
 
 <body>
-    <button type="button" class="contrast-btn" onclick="toggleTheme()" title="Alternar tema" aria-label="Alternar tema">
-        Contraste
-        <i class="bi bi-circle-half"></i>
+    <a class="skip-link" href="#mic-btn">Ir para a calculadora</a>
+
+    <button type="button" id="theme-btn" class="contrast-btn" title="Alternar tema"
+        aria-label="Alternar entre tema claro e escuro" aria-pressed="false">
+        <span>Contraste</span>
+        <i class="bi bi-circle-half" aria-hidden="true"></i>
     </button>
-    <main class="container min-vh-100 d-flex justify-content-center align-items-center">
-        <h1 class="visually-hidden">Calculadora por voz acessível</h1>
+
+    <main id="conteudo-principal" class="container min-vh-100 d-flex justify-content-center align-items-center">
+        <h1 id="app-title" class="visually-hidden">Calculadora por voz acessível</h1>
 
         <!-- calculadora -->
-        <div class="voice-calc text-center rounded-4 shadow-lg p-4 p-md-5">
-            <div id="status" class="status-text text-uppercase mb-3" role="status" aria-live="polite">
+        <section class="voice-calc text-center rounded-4 shadow-lg p-4 p-md-5" aria-labelledby="app-title"
+            aria-describedby="instructions">
+            <p id="instructions" class="instruction-text mb-3">
+                Toque no botão Falar e diga uma operação, por exemplo: dois mais dois.
+            </p>
+
+            <div id="status" class="status-text text-uppercase mb-3" role="status" aria-live="polite"
+                aria-atomic="true">
                 Toque no microfone e fale
             </div>
+
             <!-- área de exibição -->
             <div class="display-box rounded-4 p-4 mb-4">
                 <!-- mostra o que foi falado -->
-                <div id="spokenText" class="spoken-text mb-3" aria-live="polite">
+                <div id="spokenText" class="spoken-text mb-3" aria-live="polite" aria-atomic="true">
                     Você falou: —
                 </div>
+
                 <!-- resultado -->
-                <div id="display" class="display-text" aria-live="assertive" aria-atomic="true">
+                <output id="display" class="display-text" aria-live="assertive" aria-atomic="true">
                     0
-                </div>
+                </output>
             </div>
+
             <!-- botão do microfone -->
             <button type="button" id="mic-btn"
                 class="btn mic-btn d-flex align-items-center justify-content-center gap-2 position-relative mx-auto"
-                onclick="startListening()" aria-label="Iniciar reconhecimento de voz" aria-pressed="false">
+                aria-label="Iniciar reconhecimento de voz" aria-describedby="instructions">
 
-                <span class="mic-icon"><i class="bi bi-mic-fill"></i></span>
+                <span class="mic-icon" aria-hidden="true"><i class="bi bi-mic-fill"></i></span>
                 <span class="btn-text">Falar</span>
-                <span class="pulse-ring"></span>
+                <span class="pulse-ring" aria-hidden="true"></span>
             </button>
-        </div>
+        </section>
     </main>
+
     <!-- plugin de libras do governo pra acessibilidade -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
@@ -58,7 +72,10 @@
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        // inicia o VLibras apenas quando o plugin carregar corretamente
+        if (window.VLibras) {
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        }
     </script>
 
     <script src="JS/script.js"></script>
